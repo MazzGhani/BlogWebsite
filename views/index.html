@@ -14,15 +14,76 @@
         <input type="text" id="input1" name="input1"><br><br>
         <label for="input2">Message:</label>
         <input type="text" id="input2" name="input2"><br><br>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" onclick="clickDaButton()">
     </form>
     
     <p>Click the "Submit" button YERRR</p>
+
+    <div id="post1"></div>
+
+    <script>
+        windows.onload=()=>{
+            bigFUNCTION()
+        }
+        setInterval(function () {bigFUNCTION()},20000)
+function bigFUNCTION(){
+
+        var xttpR= new XMLHttpRequest()
+        xttpR.open('GET','/getMethod',true)
+        .onrxttpReadystatechange= function(){
+            if(this.readyState==4 && (this.status=200 || this.status==0)){
+                document.getElementById('post1').innerHTML='' // this converts to HTML from the get method 
+                var everyPost=JSON.parse(xttpR.responseText)
+                everyPost.forEach(post=>{
+
+                    var nTopic = document.createElement("p")
+                    var nData = document.createElement("p")
+                    var nTime = document.createElement("p")
+
+
+                    nTopic.innerHTML = post.topic
+                    nData.innerHTML = post.data
+                    nTime.innerHTML = post.timestamp
+
+                    containerDiv.appendChild(nTopic)
+                    containerDiv.appendChild(nData)
+                    containerDiv.appendChild(nTime)
+
+                     var allpostContainer = document.getElementById("post1")
+                    allpostContainer.appendChild(containerDiv)
+
+                })
+            }
+
+        }
+        xttpR.send()
+    }
+
+        function clickDaButton(){
+            alert("DA BUTTON WOOOOO")
+            var xttpR = new XMLHttpRequest()
+            var assemble= {
+                topic: document.getElementById('input1').value,
+                data: document.getElementById('input2').value,
+            }
+            xttpR.open('POST', '/main', true)
+            xttpR.onreadystatechange= function(){
+                if(this.readyState==4 && (this.status== 200 || this.status== 0)){
+                    bigFUNCTION();
+                }
+
+            }
+            xttpR.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+            xttpR.send(JSON.stringify(assemble))
+        }
+    </script>
 
     <nav>
         <a href="/">Main</a>
         <a href="/about">About page</a>
     </nav>
+
+   
 
 </body>
 </html>
